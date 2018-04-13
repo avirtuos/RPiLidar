@@ -1,0 +1,8 @@
+prefix=/home/pi/virtuoso-rpilidar/devel
+
+Name: virtuoso-rpilidar
+Description: Description of virtuoso-rpilidar
+Version: 0.1.0
+Cflags: 
+Libs: -L/home/pi/virtuoso-rpilidar/devel/lib 
+Requires: 

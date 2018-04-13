@@ -1,0 +1,8 @@
+prefix=/home/pi/virtuoso-rpilidar/devel
+
+Name: rplidar_ros
+Description: Description of rplidar_ros
+Version: 1.5.7
+Cflags: 
+Libs: -L/home/pi/virtuoso-rpilidar/devel/lib 
+Requires: 

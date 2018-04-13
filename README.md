@@ -11,15 +11,11 @@ This repository contains scripts and tools for using a SLAMTech RPLidar 360 (A1)
 
 ##### 1. Setup /dev/ttyUSBX
 
-
-Check which tty your serial RPLidar 
+Check which tty your serial RPLidar is attached to ensure you don't need any special kernel modules for the ftdi  or serial adapter you are using then add the your current user to have access to that TTY with the below command. You may need to log out and back in for it to take affect. You can confirm by running id ${USER} and seeing if the dialout group appears in the list after running the command.
 
 ```bash
 sudo gpasswd --add ${USER} dialout
 ```
-
-
-
 
 
 ## ROS Lidar Node
@@ -75,51 +71,43 @@ Next we need to install the required components for hector_slam. Do this in a fr
 
 ```bash
 cd ~
-mkdir ros_slam
-mkdir ros_slam/src
-cd ros_slam
+mkdir ros_dep_install
+mkdir ros_dep_install/src
+cd ros_dep_install
 catkin_make 
-rosinstall_generator image_transport laser_geometry cv_bridge --rosdistro kinetic --deps --wet-only --tar > kinetic-robot-wet.rosinstall
+rosinstall_generator image_transport laser_geometry cv_bridge hector_geotiff_plugins --rosdistro kinetic --deps --wet-only --tar > kinetic-robot-wet.rosinstall
 wstool init src kinetic-robot-wet.rosinstall
 rosdep install -y --from-paths src --ignore-src --rosdistro kinetic -r --os=debian:jessie
 sudo ./src/catkin/bin/catkin_make_isolated -j1 -l1 --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic
 ```
 
-Now lets install hector_mapping, hector_trajectory_server, hector_geotiff
+
+Now lets install hector_mapping, hector_trajectory_server, hector_geotiff, and hector_geotiff_plugins
+
 ```bash
 cd ~
 mkdir ros_dep_install
 mkdir ros_dep_install/src
 cd ros_dep_install
 catkin_make 
-rosinstall_generator hector_mapping hector_trajectory_server hector_geotiff --rosdistro kinetic --deps --wet-only --tar > kinetic-dep-wet.rosinstall
+rosinstall_generator hector_mapping hector_trajectory_server hector_geotiff hector_geotiff_plugins --rosdistro kinetic --deps --wet-only --tar > kinetic-dep-wet.rosinstall
 wstool init src kinetic-dep-wet.rosinstall
 rosdep install -y --from-paths src --ignore-src --rosdistro kinetic -r --os=debian:jessie
 sudo ./src/catkin/bin/catkin_make_isolated -j1 -l1 --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic
 ```
 
-
-##### 2. Setup a new catkin workspace and build the rplidar_ros package
+##### 2. Check out this package and build it
 
 ```bash
-mkdir /home/pi/workspace
-cd /home/pi/workspace
-mkdir src
-catkin_make
-source devel/setup.bash
-cd src
-wget https://github.com/robopeak/rplidar_ros/archive/master.zip
+mkdir ~/maps
+mkdir ~/workspace
+cd ~/workspace
+wget https://github.com/avirtuos/RPiLidar/archive/master.zip
 unzip master.zip
 rm master.zip
-mv rplidar_ros-master rplidar_ros
-cd ..
-
-#Needed to properly install sensor_msgs (seems like a raspberry pi jessie specific issue)
-rosinstall_generator sensor_msgs --rosdistro kinetic --deps --wet-only --tar > 
-kinetic-sensor_msgs-wet.rosinstall
-
-wstool init src kinetic-sensor_msgs-wet.rosinstall
-
+mv RPiLidar-master/ ./
+rm -rf RPiLidar-master
+source devel/setup.bash
 catkin_make
 ```
 
@@ -142,9 +130,16 @@ On the host running the rplidar node, you'll want to add the following:
 export ROS_MASTER_URI=http://pi-ros-core.localdomain:11311
 ```
 
+##### 4. Run the LIDAR + SLAM Nodes
 
-## ROS Hector-SLAM Node
-asd
+After your start roscore on your intended core node, you can start up the rplidar + slam nodes.
+
+```bash
+cd ~/workspace
+source devel/setup.bash
+roslaunch virtuoso-rpilidar run_slam.launch
+```
+
 
 ## Enclosure
 
