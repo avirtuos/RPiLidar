@@ -8,7 +8,8 @@
   <arg name="map_size" default="1024"/>
 
   <node name="rplidarNode" pkg="rplidar_ros" type="rplidarNode" output="screen">
-    <param name="serial_port" type="string" value="/dev/ttyUSB0"/>
+    <param name="serial_port" type="string" value="/dev/serial0"/>
+    <!-- if using UDB UART / FTDI <param name="serial_port" type="string" value="/dev/ttyUSB0"/> -->
     <param name="serial_baudrate" type="int" value="115200"/>
     <param name="frame_id" type="string" value="laser"/>
     <param name="inverted" type="bool" value="false"/>
